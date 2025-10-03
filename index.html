@@ -1,0 +1,274 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>TRMNL Wetter – 800×420 (Bönen)</title>
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+  <style>
+    /* ===== Reset & Base ===== */
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      background: #fff; /* High-contrast white background */
+      color: #000;      /* Pure black text */
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Noto Sans", "Liberation Sans", sans-serif;
+      letter-spacing: 0.2px;
+      display: grid;
+      place-items: center;
+    }
+
+    /* Optional inversion: add ?invert=1 to URL to switch to white-on-black */
+    body.invert { background: #000; color: #fff; }
+
+    /* ===== Fixed Canvas 800x420 ===== */
+    .canvas {
+      width: 800px;
+      height: 420px;
+      display: grid;
+      grid-template-rows: 50% 17% 33%; /* top half, spacer, bottom third */
+      gap: 0;
+      padding: 12px 16px;
+    }
+
+    /* Headings */
+    .title {
+      font-weight: 900;
+      letter-spacing: 0.5px;
+    }
+    .title.today { font-size: 26px; }
+    .title.tomorrow { font-size: 22px; }
+
+    /* 3-column weather layout */
+    .grid3 {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      align-items: center;
+      gap: 12px;
+    }
+
+    /* Today sizing */
+    .today .icon svg { width: 200px; height: 200px; }
+    .today .temp { font-size: 140px; line-height: 0.9; font-weight: 800; text-align: center; }
+    .today .hi-lo { font-size: 42px; font-weight: 900; display: grid; gap: 8px; justify-items: start; }
+
+    /* Tomorrow (smaller) */
+    .tomorrow .icon svg { width: 140px; height: 140px; }
+    .tomorrow .temp { font-size: 90px; line-height: 0.9; font-weight: 800; text-align: center; }
+    .tomorrow .hi-lo { font-size: 28px; font-weight: 900; display: grid; gap: 6px; justify-items: start; }
+
+    /* Line-art icons: only strokes, no fills */
+    svg, svg * { fill: none; stroke: currentColor; }
+    .icon { display: grid; place-items: center; }
+  </style>
+</head>
+<body>
+  <!-- Inline SVG symbol defs (line art) -->
+  <svg width="0" height="0" style="position:absolute">
+    <!-- Sun (outline + rays) -->
+    <symbol id="i-sun" viewBox="0 0 64 64">
+      <circle cx="32" cy="32" r="14" stroke-width="4"/>
+      <g stroke-width="4" stroke-linecap="round">
+        <path d="M32 4v10M32 50v10M4 32h10M50 32h10M12 12l7 7M45 45l7 7M12 52l7-7M45 19l7-7"/>
+      </g>
+    </symbol>
+
+    <!-- Moon (crescent outline) -->
+    <symbol id="i-moon" viewBox="0 0 64 64">
+      <path d="M44 43c-13 0-23-10-23-23 0-6 2-11 6-15C16 7 8 17 8 29c0 14 11 25 25 25 12 0 22-8 24-19-4 4-8 8-13 8z" stroke-width="4"/>
+    </symbol>
+
+    <!-- Cloud (outline) -->
+    <symbol id="i-cloud" viewBox="0 0 64 64">
+      <path d="M48 49H18a12 12 0 1 1 3.2-23.6A16 16 0 0 1 58 32a12 12 0 0 1-10 17z" stroke-width="4"/>
+    </symbol>
+
+    <!-- Sun behind cloud (line art) -->
+    <symbol id="i-sun-cloud" viewBox="0 0 64 64">
+      <use href="#i-sun" x="-6" y="-6" width="40" height="40"/>
+      <use href="#i-cloud"/>
+    </symbol>
+
+    <!-- Moon behind cloud (line art) -->
+    <symbol id="i-moon-cloud" viewBox="0 0 64 64">
+      <use href="#i-moon" x="-6" y="-6" width="40" height="40"/>
+      <use href="#i-cloud"/>
+    </symbol>
+
+    <!-- Rain (outline cloud + drop lines) -->
+    <symbol id="i-rain" viewBox="0 0 64 64">
+      <use href="#i-cloud"/>
+      <g stroke-width="4" stroke-linecap="round">
+        <path d="M22 50v8M32 50v8M42 50v8"/>
+      </g>
+    </symbol>
+
+    <!-- Drizzle (thinner lines) -->
+    <symbol id="i-drizzle" viewBox="0 0 64 64">
+      <use href="#i-cloud"/>
+      <g stroke-width="3" stroke-linecap="round">
+        <path d="M22 50v6M32 50v6M42 50v6"/>
+      </g>
+    </symbol>
+
+    <!-- Snow (outline cloud + hollow flakes) -->
+    <symbol id="i-snow" viewBox="0 0 64 64">
+      <use href="#i-cloud"/>
+      <g stroke-width="3">
+        <circle cx="22" cy="54" r="3"/>
+        <circle cx="32" cy="54" r="3"/>
+        <circle cx="42" cy="54" r="3"/>
+      </g>
+    </symbol>
+
+    <!-- Thunder (outline cloud + bolt) -->
+    <symbol id="i-thunder" viewBox="0 0 64 64">
+      <use href="#i-cloud"/>
+      <path d="M30 42h8l-6 10h6l-10 12 4-12h-6z" stroke-width="4"/>
+    </symbol>
+
+    <!-- Fog (outline cloud + lines) -->
+    <symbol id="i-fog" viewBox="0 0 64 64">
+      <use href="#i-cloud"/>
+      <g stroke-width="3" stroke-linecap="round">
+        <path d="M14 52h36M18 58h28"/>
+      </g>
+    </symbol>
+  </svg>
+
+  <div class="canvas">
+    <!-- ===== TODAY (top half) ===== -->
+    <section class="today">
+      <div class="title today">Today in Bönen</div>
+      <div class="grid3">
+        <div class="icon"><svg aria-hidden="true" id="icon-today"><use href="#i-cloud"></use></svg></div>
+        <div class="temp" id="temp-today">–°</div>
+        <div class="hi-lo">
+          <div id="hi-today">▲ –°</div>
+          <div id="lo-today">▼ –°</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Spacer (keeps the visual split 1/2 vs 1/3) -->
+    <section></section>
+
+    <!-- ===== TOMORROW (bottom third) ===== -->
+    <section class="tomorrow">
+      <div class="title tomorrow">Tomorrow in Bönen</div>
+      <div class="grid3">
+        <div class="icon"><svg aria-hidden="true" id="icon-tom"><use href="#i-cloud"></use></svg></div>
+        <div class="temp" id="temp-tom">–°</div>
+        <div class="hi-lo">
+          <div id="hi-tom">▲ –°</div>
+          <div id="lo-tom">▼ –°</div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    (function() {
+      // Fixed location: Bönen, Germany
+      const lat = 51.600;   // Bönen ~ 51.600° N
+      const lon = 7.766;    // Bönen ~ 7.766° E
+
+      // Optional color inversion via query param
+      const params = new URLSearchParams(location.search);
+      const invert = params.get('invert');
+      if (invert === '1' || invert === 'true') {
+        document.body.classList.add('invert');
+      }
+
+      async function load() {
+        try {
+          const url = new URL('https://api.open-meteo.com/v1/forecast');
+          url.searchParams.set('latitude', lat);
+          url.searchParams.set('longitude', lon);
+          url.searchParams.set('timezone', 'auto');
+          url.searchParams.set('current_weather', 'true');
+          url.searchParams.set('daily', 'weathercode,temperature_2m_max,temperature_2m_min');
+
+          const res = await fetch(url.toString(), { cache: 'no-store' });
+          if (!res.ok) throw new Error('HTTP ' + res.status);
+          const data = await res.json();
+
+          const cw = data.current_weather || {};
+          const daily = data.daily || {};
+          const todayIdx = 0, tomorrowIdx = 1;
+
+          // TODAY
+          const nowTemp = cw.temperature != null ? Math.round(cw.temperature) : (daily.temperature_2m_max ? Math.round(daily.temperature_2m_max[todayIdx]) : null);
+          const tMax0 = daily.temperature_2m_max ? Math.round(daily.temperature_2m_max[todayIdx]) : null;
+          const tMin0 = daily.temperature_2m_min ? Math.round(daily.temperature_2m_min[todayIdx]) : null;
+          const codeNow = (cw.weathercode != null ? cw.weathercode : (daily.weathercode ? daily.weathercode[todayIdx] : 3));
+          const isDay = cw.is_day === 1; // default to day icons if undefined
+
+          if (nowTemp != null) document.getElementById('temp-today').textContent = nowTemp + '°';
+          if (tMax0 != null) document.getElementById('hi-today').textContent = '▲ ' + tMax0 + '°';
+          if (tMin0 != null) document.getElementById('lo-today').textContent = '▼ ' + tMin0 + '°';
+          setIcon('today', (isDay ? interpretWMO(codeNow, true).icon : interpretWMO(codeNow, false).icon));
+
+          // TOMORROW (use daily forecast; center shows max temp)
+          const tMax1 = daily.temperature_2m_max ? Math.round(daily.temperature_2m_max[tomorrowIdx]) : null;
+          const tMin1 = daily.temperature_2m_min ? Math.round(daily.temperature_2m_min[tomorrowIdx]) : null;
+          const code1 = daily.weathercode ? daily.weathercode[tomorrowIdx] : 3;
+
+          if (tMax1 != null) document.getElementById('temp-tom').textContent = tMax1 + '°';
+          if (tMax1 != null) document.getElementById('hi-tom').textContent = '▲ ' + tMax1 + '°';
+          if (tMin1 != null) document.getElementById('lo-tom').textContent = '▼ ' + tMin1 + '°';
+          setIcon('tom', interpretWMO(code1, true).icon);
+        } catch (err) {
+          console.error(err);
+        }
+      }
+
+      function setIcon(which, id) {
+        const use = document.querySelector('#icon-' + which + ' use');
+        use.setAttribute('href', '#i-' + id);
+      }
+
+      function interpretWMO(code, isDay) {
+        const map = {
+          0: { d: {icon:'sun', text:'Klar'}, n: {icon:'moon', text:'Klar'} },
+          1: { d: {icon:'sun-cloud', text:'Überwiegend klar'}, n:{icon:'moon-cloud', text:'Überwiegend klar'} },
+          2: { d: {icon:'sun-cloud', text:'Teilweise bewölkt'}, n:{icon:'moon-cloud', text:'Teilweise bewölkt'} },
+          3: { d: {icon:'cloud', text:'Bewölkt'}, n:{icon:'cloud', text:'Bewölkt'} },
+          45:{ d: {icon:'fog', text:'Nebel'}, n:{icon:'fog', text:'Nebel'} },
+          48:{ d: {icon:'fog', text:'Reifnebel'}, n:{icon:'fog', text:'Reifnebel'} },
+          51:{ d: {icon:'drizzle', text:'Leichter Niesel'}, n:{icon:'drizzle', text:'Leichter Niesel'} },
+          53:{ d: {icon:'drizzle', text:'Mäßiger Niesel'}, n:{icon:'drizzle', text:'Mäßiger Niesel'} },
+          55:{ d: {icon:'drizzle', text:'Starker Niesel'}, n:{icon:'drizzle', text:'Starker Niesel'} },
+          56:{ d: {icon:'drizzle', text:'Gefrierender Niesel'}, n:{icon:'drizzle', text:'Gefrierender Niesel'} },
+          57:{ d: {icon:'drizzle', text:'Gefrierender Niesel'}, n:{icon:'drizzle', text:'Gefrierender Niesel'} },
+          61:{ d: {icon:'rain', text:'Leichter Regen'}, n:{icon:'rain', text:'Leichter Regen'} },
+          63:{ d: {icon:'rain', text:'Regen'}, n:{icon:'rain', text:'Regen'} },
+          65:{ d: {icon:'rain', text:'Starker Regen'}, n:{icon:'rain', text:'Starker Regen'} },
+          66:{ d: {icon:'rain', text:'Gefrierender Regen'}, n:{icon:'rain', text:'Gefrierender Regen'} },
+          67:{ d: {icon:'rain', text:'Gefrierender Regen'}, n:{icon:'rain', text:'Gefrierender Regen'} },
+          71:{ d: {icon:'snow', text:'Leichter Schneefall'}, n:{icon:'snow', text:'Leichter Schneefall'} },
+          73:{ d: {icon:'snow', text:'Schneefall'}, n:{icon:'snow', text:'Schneefall'} },
+          75:{ d: {icon:'snow', text:'Starker Schneefall'}, n:{icon:'snow', text:'Starker Schneefall'} },
+          77:{ d: {icon:'snow', text:'Schneekörner'}, n:{icon:'snow', text:'Schneekörner'} },
+          80:{ d: {icon:'rain', text:'Leichte Schauer'}, n:{icon:'rain', text:'Leichte Schauer'} },
+          81:{ d: {icon:'rain', text:'Schauer'}, n:{icon:'rain', text:'Schauer'} },
+          82:{ d: {icon:'rain', text:'Starke Schauer'}, n:{icon:'rain', text:'Starke Schauer'} },
+          85:{ d: {icon:'snow', text:'Leichte Schneeschauer'}, n:{icon:'snow', text:'Leichte Schneeschauer'} },
+          86:{ d: {icon:'snow', text:'Starke Schneeschauer'}, n:{icon:'snow', text:'Starke Schneeschauer'} },
+          95:{ d: {icon:'thunder', text:'Gewitter'}, n:{icon:'thunder', text:'Gewitter'} },
+          96:{ d: {icon:'thunder', text:'Gewitter (Hagel)'}, n:{icon:'thunder', text:'Gewitter (Hagel)'} },
+          99:{ d: {icon:'thunder', text:'Gewitter (Hagel)'}, n:{icon:'thunder', text:'Gewitter (Hagel)'} }
+        };
+        const row = map[code] || { d:{icon:'cloud', text:'Unbekannt'}, n:{icon:'cloud', text:'Unbekannt'} };
+        return isDay ? row.d : row.n;
+      }
+
+      load();
+      setInterval(load, 15 * 60 * 1000);
+    })();
+  </script>
+</body>
+</html>
