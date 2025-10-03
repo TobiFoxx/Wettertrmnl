@@ -2,172 +2,198 @@
 <html lang="de">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>TRMNL Wetter – 800×480 (Bönen + Sheet)</title>
+  <meta name="viewport" content="width=800, height=480" />
+  <title>TRMNL Wetter Bönen</title>
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
+  <link rel="preconnect" href="https://fonts.cdnfonts.com" crossorigin>
+  <link href="https://fonts.cdnfonts.com/css/charles-wright" rel="stylesheet">
   <style>
-    /* ===== Minimal S/W dashboard (800x480) ===== */
-    * { box-sizing: border-box; }
-    html, body { height: 100%; }
-    body {
-      margin: 0;
-      background: #fff; /* pure white */
-      color: #000;      /* pure black */
-      font-family: ui-sans-serif, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Noto Sans", sans-serif;
-      font-weight: 300; /* thin default */
-      letter-spacing: 0.1px;
-      display: grid;
-      place-items: center;
+    * { 
+      box-sizing: border-box; 
+      margin: 0; 
+      padding: 0; 
     }
-    body.invert { background: #000; color: #fff; }
+    
+    html, body { 
+      height: 100%; 
+      overflow: hidden;
+    }
+    
+    body {
+      background: #fff;
+      color: #000;
+      font-family: 'Charles Wright', -apple-system, system-ui, sans-serif;
+      font-weight: 400;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    
+    body.invert { 
+      background: #000; 
+      color: #fff; 
+    }
 
-    /* Root grid: left 2/3 weather, right 1/3 sheet */
     .canvas {
       width: 800px;
-      height: 480px; /* updated height */
+      height: 480px;
       display: grid;
-      grid-template-columns: 2fr 1fr; /* left = weather, right = sheet */
-      column-gap: 10px;
-      padding: 12px 16px;
+      grid-template-columns: 280px 1fr;
+      gap: 0;
+      padding: 0;
     }
 
-    /* Left column split: today / tomorrow */
-    .left { display: grid; grid-template-rows: 1fr 1fr; gap: 8px; }
+    /* ===== LINKE SEITE: WETTER ===== */
+    .weather {
+      background: #000;
+      color: #fff;
+      padding: 32px 28px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    
+    body.invert .weather {
+      background: #fff;
+      color: #000;
+    }
 
-    .title { font-weight: 400; letter-spacing: 0.4px; }
-    .title.today { font-size: 22px; }
-    .title.tomorrow { font-size: 18px; opacity: 0.95; }
+    .location {
+      font-size: 22px;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      margin-bottom: 24px;
+    }
 
-    /* Three-column weather blocks */
-    .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; align-items: center; gap: 10px; }
+    .temp-main {
+      font-size: 108px;
+      font-weight: 700;
+      line-height: 0.9;
+      letter-spacing: -2px;
+      margin: 20px 0;
+    }
 
-    /* Icon styling – responsive to avoid clipping */
-    .icon { display: grid; place-items: center; }
-    .icon svg { width: 100%; height: auto; }
-    .today .icon svg { max-width: 160px; }  /* ensure it fits 1/3 column */
-    .tomorrow .icon svg { max-width: 120px; }
+    .temp-range {
+      display: flex;
+      gap: 24px;
+      font-size: 32px;
+      font-weight: 500;
+      margin: 16px 0;
+      opacity: 0.85;
+    }
 
-    /* Numerals: thin, minimalist */
-    .today .temp { font-size: 132px; line-height: 0.85; font-weight: 300; text-align: center; letter-spacing: -1px; }
-    .tomorrow .temp { font-size: 90px; line-height: 0.85; font-weight: 300; text-align: center; letter-spacing: -0.5px; }
+    .temp-hi::before { content: '△ '; opacity: 0.6; }
+    .temp-lo::before { content: '▽ '; opacity: 0.6; }
 
-    .hi-lo { font-weight: 300; display: grid; gap: 10px; justify-items: start; }
-    .today .hi-lo { font-size: 40px; }
-    .tomorrow .hi-lo { font-size: 28px; }
+    .rain-prob {
+      font-size: 18px;
+      font-weight: 400;
+      margin-top: 20px;
+      opacity: 0.75;
+      line-height: 1.4;
+    }
 
-    /* Right column: Sheet panel (no title as requested) */
-    .right { display: grid; grid-template-rows: 1fr; border-left: 2px solid currentColor; padding-left: 12px; }
-    .sheet-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; align-content: start; overflow: hidden; }
-    .sheet-item { font-size: 24px; font-weight: 300; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    /* ===== RECHTE SEITE: LISTE ===== */
+    .content {
+      background: #fff;
+      color: #000;
+      padding: 32px 36px;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    body.invert .content {
+      background: #000;
+      color: #fff;
+    }
 
-    /* Pure line art for all icons */
-    svg, svg * { fill: none; stroke: currentColor; vector-effect: non-scaling-stroke; stroke-linecap: round; stroke-linejoin: round; }
+    .list-header {
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 2px solid currentColor;
+      opacity: 0.7;
+    }
+
+    .sheet-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .sheet-item {
+      font-size: 24px;
+      font-weight: 500;
+      padding: 10px 0;
+      border-bottom: 1px solid currentColor;
+      opacity: 0.9;
+    }
+
+    .sheet-item:last-child {
+      border-bottom: none;
+    }
+
+    /* Aktualisierungszeit */
+    .update-time {
+      position: absolute;
+      bottom: 8px;
+      right: 12px;
+      font-size: 11px;
+      opacity: 0.4;
+      font-weight: 400;
+    }
   </style>
 </head>
 <body>
-  <!-- ===== Alternative minimalist weather icon set (line art) ===== -->
-  <svg width="0" height="0" style="position:absolute">
-    <!-- Sun: thin halo + short rays -->
-    <symbol id="w-sun" viewBox="0 0 64 64">
-      <circle cx="32" cy="32" r="12"/>
-      <path d="M32 6v8M32 50v8M6 32h8M50 32h8M14 14l6 6M44 44l6 6M14 50l6-6M44 20l6-6"/>
-    </symbol>
-    <!-- Moon: slim crescent -->
-    <symbol id="w-moon" viewBox="0 0 64 64">
-      <path d="M42 44c-12 0-22-9.8-22-22 0-5.5 2-10.6 5.3-14.4C16 9.2 10.2 18.3 10.2 28.8 10.2 42.4 21.6 54 35.2 54c10.5 0 19.6-5.8 22.4-14.9C54.3 41.7 48.8 44 42 44z"/>
-    </symbol>
-    <!-- Cloud: airy outline -->
-    <symbol id="w-cloud" viewBox="0 0 64 64">
-      <path d="M22 48c-7 0-13-5.4-13-12s6-12 13.5-12c1.2-7.7 8.3-13.5 16.4-13.5C47.8 10.5 55 17.7 55 26.4c6 0 9.8 4.7 9.8 9.8C64.8 42.8 60.3 48 53.8 48H22z"/>
-    </symbol>
-    <!-- Partly (sun+cloud) -->
-    <symbol id="w-suncloud" viewBox="0 0 64 64">
-      <use href="#w-sun" x="-6" y="-6" width="40" height="40"/>
-      <use href="#w-cloud"/>
-    </symbol>
-    <!-- Night partly (moon+cloud) -->
-    <symbol id="w-mooncloud" viewBox="0 0 64 64">
-      <use href="#w-moon" x="-6" y="-6" width="40" height="40"/>
-      <use href="#w-cloud"/>
-    </symbol>
-    <!-- Rain -->
-    <symbol id="w-rain" viewBox="0 0 64 64">
-      <use href="#w-cloud"/>
-      <path d="M22 50v8M32 50v8M42 50v8"/>
-    </symbol>
-    <!-- Drizzle -->
-    <symbol id="w-drizzle" viewBox="0 0 64 64">
-      <use href="#w-cloud"/>
-      <g style="stroke-width:2"><path d="M22 52v5M32 52v5M42 52v5"/></g>
-    </symbol>
-    <!-- Snow -->
-    <symbol id="w-snow" viewBox="0 0 64 64">
-      <use href="#w-cloud"/>
-      <g><circle cx="22" cy="54" r="2.4"/><circle cx="32" cy="54" r="2.4"/><circle cx="42" cy="54" r="2.4"/></g>
-    </symbol>
-    <!-- Thunder -->
-    <symbol id="w-thunder" viewBox="0 0 64 64">
-      <use href="#w-cloud"/>
-      <polyline points="30,42 38,42 30,54 38,54 28,66"/>
-    </symbol>
-    <!-- Fog -->
-    <symbol id="w-fog" viewBox="0 0 64 64">
-      <use href="#w-cloud"/>
-      <path d="M14 52h36M18 58h28"/>
-    </symbol>
-  </svg>
-
   <div class="canvas">
-    <!-- LEFT: WEATHER -->
-    <div class="left">
-      <!-- TODAY -->
-      <section class="today">
-        <div class="title today">Today in Bönen</div>
-        <div class="grid3">
-          <div class="icon"><svg aria-hidden="true" id="icon-today"><use href="#w-cloud"></use></svg></div>
-          <div class="temp" id="temp-today">–°</div>
-          <div class="hi-lo">
-            <div id="hi-today">▲ –°</div>
-            <div id="lo-today">▼ –°</div>
-          </div>
+    <!-- LINKE SEITE: WETTER -->
+    <div class="weather">
+      <div>
+        <div class="location">BÖNEN</div>
+        <div class="temp-main" id="temp">–°</div>
+        <div class="temp-range">
+          <span class="temp-hi" id="hi">–°</span>
+          <span class="temp-lo" id="lo">–°</span>
         </div>
-      </section>
-      <!-- TOMORROW -->
-      <section class="tomorrow">
-        <div class="title tomorrow">Tomorrow in Bönen</div>
-        <div class="grid3">
-          <div class="icon"><svg aria-hidden="true" id="icon-tom"><use href="#w-cloud"></use></svg></div>
-          <div class="temp" id="temp-tom">–°</div>
-          <div class="hi-lo">
-            <div id="hi-tom">▲ –°</div>
-            <div id="lo-tom">▼ –°</div>
-          </div>
-        </div>
-      </section>
+      </div>
+      <div class="rain-prob" id="prob">Regen: – %</div>
     </div>
 
-    <!-- RIGHT: SHEET PANEL (A2..A7) – no title -->
-    <aside class="right">
+    <!-- RECHTE SEITE: LISTE -->
+    <div class="content">
+      <div class="list-header">Aufgaben</div>
       <ul class="sheet-list" id="sheet-list">
-        <li class="sheet-item">Wird geladen …</li>
+        <li class="sheet-item">Lädt …</li>
       </ul>
-    </aside>
+    </div>
   </div>
+
+  <div class="update-time" id="update-time"></div>
 
   <script>
     (function() {
-      // Fixed location: Bönen, Germany
       const lat = 51.600;
       const lon = 7.766;
 
-      // Optional invert
+      // Invert-Modus
       const params = new URLSearchParams(location.search);
-      const invert = params.get('invert');
-      if (invert === '1' || invert === 'true') document.body.classList.add('invert');
+      if (params.get('invert') === '1' || params.get('invert') === 'true') {
+        document.body.classList.add('invert');
+      }
 
-      // ===== WEATHER =====
+      // Aktualisierungszeit
+      function updateTime() {
+        const now = new Date();
+        const time = now.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
+        document.getElementById('update-time').textContent = `${time}`;
+      }
+
+      // ===== WETTER LADEN =====
       async function loadWeather() {
         try {
           const url = new URL('https://api.open-meteo.com/v1/forecast');
@@ -175,7 +201,8 @@
           url.searchParams.set('longitude', lon);
           url.searchParams.set('timezone', 'auto');
           url.searchParams.set('current_weather', 'true');
-          url.searchParams.set('daily', 'weathercode,temperature_2m_max,temperature_2m_min');
+          url.searchParams.set('daily', 'temperature_2m_max,temperature_2m_min,precipitation_probability_max');
+          url.searchParams.set('hourly', 'precipitation_probability');
 
           const res = await fetch(url.toString(), { cache: 'no-store' });
           if (!res.ok) throw new Error('HTTP ' + res.status);
@@ -183,109 +210,88 @@
 
           const cw = data.current_weather || {};
           const daily = data.daily || {};
-          const todayIdx = 0, tomorrowIdx = 1;
+          const todayIdx = 0;
 
-          // TODAY
-          const nowTemp = cw.temperature != null ? Math.round(cw.temperature) : (daily.temperature_2m_max ? Math.round(daily.temperature_2m_max[todayIdx]) : null);
-          const tMax0 = daily.temperature_2m_max ? Math.round(daily.temperature_2m_max[todayIdx]) : null;
-          const tMin0 = daily.temperature_2m_min ? Math.round(daily.temperature_2m_min[todayIdx]) : null;
-          const codeNow = (cw.weathercode != null ? cw.weathercode : (daily.weathercode ? daily.weathercode[todayIdx] : 3));
-          const isDay = cw.is_day === 1;
+          const nowTemp = cw.temperature != null ? Math.round(cw.temperature) : null;
+          const tMax = daily.temperature_2m_max ? Math.round(daily.temperature_2m_max[todayIdx]) : null;
+          const tMin = daily.temperature_2m_min ? Math.round(daily.temperature_2m_min[todayIdx]) : null;
 
-          if (nowTemp != null) document.getElementById('temp-today').textContent = nowTemp + '°';
-          if (tMax0 != null) document.getElementById('hi-today').textContent = '▲ ' + tMax0 + '°';
-          if (tMin0 != null) document.getElementById('lo-today').textContent = '▼ ' + tMin0 + '°';
-          setIcon('today', (isDay ? interpretWMO(codeNow, true).icon : interpretWMO(codeNow, false).icon));
+          let prob = null;
+          if (daily.precipitation_probability_max && daily.precipitation_probability_max[todayIdx] != null) {
+            prob = Math.round(daily.precipitation_probability_max[todayIdx]);
+          } else if (data.hourly && data.hourly.time && data.hourly.precipitation_probability) {
+            const tzNow = new Date();
+            const start = new Date(tzNow.getFullYear(), tzNow.getMonth(), tzNow.getDate(), 0, 0, 0);
+            const end = new Date(tzNow.getFullYear(), tzNow.getMonth(), tzNow.getDate(), 23, 59, 59);
+            let maxP = null;
+            for (let i = 0; i < data.hourly.time.length; i++) {
+              const t = new Date(data.hourly.time[i]);
+              if (t >= start && t <= end) {
+                const p = data.hourly.precipitation_probability[i];
+                if (p != null) maxP = maxP == null ? p : Math.max(maxP, p);
+              }
+            }
+            if (maxP != null) prob = Math.round(maxP);
+          }
 
-          // TOMORROW
-          const tMax1 = daily.temperature_2m_max ? Math.round(daily.temperature_2m_max[tomorrowIdx]) : null;
-          const tMin1 = daily.temperature_2m_min ? Math.round(daily.temperature_2m_min[tomorrowIdx]) : null;
-          const code1 = daily.weathercode ? daily.weathercode[tomorrowIdx] : 3;
-
-          if (tMax1 != null) document.getElementById('temp-tom').textContent = tMax1 + '°';
-          if (tMax1 != null) document.getElementById('hi-tom').textContent = '▲ ' + tMax1 + '°';
-          if (tMin1 != null) document.getElementById('lo-tom').textContent = '▼ ' + tMin1 + '°';
-          setIcon('tom', interpretWMO(code1, true).icon);
+          if (nowTemp != null) document.getElementById('temp').textContent = nowTemp + '°';
+          if (tMax != null) document.getElementById('hi').textContent = tMax + '°';
+          if (tMin != null) document.getElementById('lo').textContent = tMin + '°';
+          if (prob != null) document.getElementById('prob').textContent = 'Regen: ' + prob + ' %';
+          
+          updateTime();
         } catch (err) {
-          console.error('Weather error', err);
+          console.error('Wetter-Fehler:', err);
         }
       }
 
-      function setIcon(which, id) {
-        const use = document.querySelector('#icon-' + which + ' use');
-        use.setAttribute('href', '#w-' + id);
-      }
-
-      function interpretWMO(code, isDay) {
-        const map = {
-          0: { d: {icon:'sun', text:'Klar'}, n: {icon:'moon', text:'Klar'} },
-          1: { d: {icon:'suncloud', text:'Überwiegend klar'}, n:{icon:'mooncloud', text:'Überwiegend klar'} },
-          2: { d: {icon:'suncloud', text:'Teilweise bewölkt'}, n:{icon:'mooncloud', text:'Teilweise bewölkt'} },
-          3: { d: {icon:'cloud', text:'Bewölkt'}, n:{icon:'cloud', text:'Bewölkt'} },
-          45:{ d: {icon:'fog', text:'Nebel'}, n:{icon:'fog', text:'Nebel'} },
-          48:{ d: {icon:'fog', text:'Reifnebel'}, n:{icon:'fog', text:'Reifnebel'} },
-          51:{ d: {icon:'drizzle', text:'Leichter Niesel'}, n:{icon:'drizzle', text:'Leichter Niesel'} },
-          53:{ d: {icon:'drizzle', text:'Mäßiger Niesel'}, n:{icon:'drizzle', text:'Mäßiger Niesel'} },
-          55:{ d: {icon:'drizzle', text:'Starker Niesel'}, n:{icon:'drizzle', text:'Starker Niesel'} },
-          56:{ d: {icon:'drizzle', text:'Gefrierender Niesel'}, n:{icon:'drizzle', text:'Gefrierender Niesel'} },
-          57:{ d: {icon:'drizzle', text:'Gefrierender Niesel'}, n:{icon:'drizzle', text:'Gefrierender Niesel'} },
-          61:{ d: {icon:'rain', text:'Leichter Regen'}, n:{icon:'rain', text:'Leichter Regen'} },
-          63:{ d: {icon:'rain', text:'Regen'}, n:{icon:'rain', text:'Regen'} },
-          65:{ d: {icon:'rain', text:'Starker Regen'}, n:{icon:'rain', text:'Starker Regen'} },
-          66:{ d: {icon:'rain', text:'Gefrierender Regen'}, n:{icon:'rain', text:'Gefrierender Regen'} },
-          67:{ d: {icon:'rain', text:'Gefrierender Regen'}, n:{icon:'rain', text:'Gefrierender Regen'} },
-          71:{ d: {icon:'snow', text:'Leichter Schneefall'}, n:{icon:'snow', text:'Leichter Schneefall'} },
-          73:{ d: {icon:'snow', text:'Schneefall'}, n:{icon:'snow', text:'Schneefall'} },
-          75:{ d: {icon:'snow', text:'Starker Schneefall'}, n:{icon:'snow', text:'Starker Schneefall'} },
-          77:{ d: {icon:'snow', text:'Schneekörner'}, n:{icon:'snow', text:'Schneekörner'} },
-          80:{ d: {icon:'rain', text:'Leichte Schauer'}, n:{icon:'rain', text:'Leichte Schauer'} },
-          81:{ d: {icon:'rain', text:'Schauer'}, n:{icon:'rain', text:'Schauer'} },
-          82:{ d: {icon:'rain', text:'Starke Schauer'}, n:{icon:'rain', text:'Starke Schauer'} },
-          85:{ d: {icon:'snow', text:'Leichte Schneeschauer'}, n:{icon:'snow', text:'Leichte Schneeschauer'} },
-          86:{ d: {icon:'snow', text:'Starke Schneeschauer'}, n:{icon:'snow', text:'Starke Schneeschauer'} },
-          95:{ d: {icon:'thunder', text:'Gewitter'}, n:{icon:'thunder', text:'Gewitter'} },
-          96:{ d: {icon:'thunder', text:'Gewitter (Hagel)'}, n:{icon:'thunder', text:'Gewitter (Hagel)'} },
-          99:{ d: {icon:'thunder', text:'Gewitter (Hagel)'}, n:{icon:'thunder', text:'Gewitter (Hagel)'} }
-        };
-        const row = map[code] || { d:{icon:'cloud', text:'Unbekannt'}, n:{icon:'cloud', text:'Unbekannt'} };
-        return isDay ? row.d : row.n;
-      }
-
-      // ===== SHEET (A2..A7) =====
+      // ===== GOOGLE SHEET LADEN =====
       async function loadSheet() {
         const id = '1SfImqWa8PeKYWaXs01YQdFRSyUABkPlhBNluPeB6q8c';
         const endpoints = [
-          `https://docs.google.com/spreadsheets/d/${id}/gviz/tq?tqx=out:csv&range=A2:A7`,
-          `https://docs.google.com/spreadsheets/d/${id}/export?format=csv&range=A2:A7`
+          `https://docs.google.com/spreadsheets/d/${id}/gviz/tq?tqx=out:csv&range=A2:A`,
+          `https://docs.google.com/spreadsheets/d/${id}/export?format=csv&range=A2:A50`
         ];
         const list = document.getElementById('sheet-list');
-        list.innerHTML = '<li class="sheet-item">Wird geladen …</li>';
+        list.innerHTML = '<li class="sheet-item">Lädt …</li>';
+        
         for (const url of endpoints) {
           try {
             const res = await fetch(url, { cache: 'no-store', mode: 'cors' });
             if (!res.ok) throw new Error('HTTP ' + res.status);
             const text = await res.text();
-            const rows = text.split(/\r?\n/).map(s => s.replace(/^"|"$/g, '').trim()).filter(Boolean);
+            const rows = text.split(/\r?\n/)
+              .map(s => s.replace(/^"|"$/g, '').trim())
+              .filter(Boolean);
+            
             if (rows.length) {
-              list.innerHTML = rows.map(v => `<li class="sheet-item">${escapeHTML(v)}</li>`).join('');
+              list.innerHTML = rows
+                .map(v => `<li class="sheet-item">${escapeHTML(v)}</li>`)
+                .join('');
               return;
             }
           } catch (e) {
-            // try next endpoint
+            console.error('Sheet-Fehler:', e);
           }
         }
-        list.innerHTML = '<li class="sheet-item">Kein Zugriff auf das Sheet (Link freigeben?)</li>';
+        list.innerHTML = '<li class="sheet-item">Keine Daten verfügbar</li>';
       }
 
-      function escapeHTML(s){
-        return s.replace(/[&<>\"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+      function escapeHTML(s) {
+        return s.replace(/[&<>"]/g, c => ({
+          '&': '&amp;',
+          '<': '&lt;',
+          '>': '&gt;',
+          '"': '&quot;'
+        }[c]));
       }
 
-      // Initial load + periodic refreshes
+      // Initialisierung
       loadWeather();
       loadSheet();
-      setInterval(loadWeather, 15 * 60 * 1000);
-      setInterval(loadSheet, 5 * 60 * 1000);
+      setInterval(loadWeather, 15 * 60 * 1000);  // Alle 15 Minuten
+      setInterval(loadSheet, 5 * 60 * 1000);     // Alle 5 Minuten
+      setInterval(updateTime, 60 * 1000);        // Jede Minute
     })();
   </script>
 </body>
