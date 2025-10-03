@@ -11,6 +11,9 @@
   <link href="https://fonts.cdnfonts.com/css/share-tech-mono" rel="stylesheet">
   <link href="https://fonts.cdnfonts.com/css/charles-wright" rel="stylesheet">
   <style>
+    @import url('https://fonts.cdnfonts.com/css/charles-wright');
+  </style>
+  <style>
     * { 
       box-sizing: border-box; 
       margin: 0; 
@@ -75,6 +78,10 @@
       font-family: 'Charles Wright', sans-serif;
     }
     
+    .weather * {
+      font-family: 'Charles Wright', sans-serif;
+    }
+    
     body.invert .weather {
       background: #000;
       color: #fff;
@@ -94,14 +101,14 @@
     }
 
     .temp-hi {
-      font-size: 36px;
-      font-weight: 500;
+      font-size: 42px;
+      font-weight: 600;
       margin-bottom: 32px;
     }
     
     .temp-hi::before { 
       content: '△ '; 
-      font-size: 28px;
+      font-size: 34px;
     }
 
     .temp-main {
@@ -113,14 +120,14 @@
     }
 
     .temp-lo {
-      font-size: 36px;
-      font-weight: 500;
+      font-size: 42px;
+      font-weight: 600;
       margin-top: 32px;
     }
     
     .temp-lo::before { 
       content: '▽ '; 
-      font-size: 28px;
+      font-size: 34px;
     }
 
     .temp-range {
@@ -162,14 +169,14 @@
     }
 
     .sheet-item {
-      font-size: 28px;
-      font-weight: 400;
-      padding: 12px 0;
+      font-size: 32px;
+      font-weight: 700;
+      padding: 14px 0;
       border-bottom: 1px solid currentColor;
       letter-spacing: -0.3px;
     }
 
-    .sheet-item:nth-child(n+8) {
+    .sheet-item:nth-child(n+7) {
       display: none;
     }
 
