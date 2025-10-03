@@ -85,13 +85,11 @@
     .temp-hi {
       font-size: 36px;
       font-weight: 500;
-      opacity: 0.7;
-      margin-bottom: 8px;
+      margin-bottom: 16px;
     }
     
     .temp-hi::before { 
       content: '△ '; 
-      opacity: 0.5; 
       font-size: 28px;
     }
 
@@ -100,20 +98,24 @@
       font-weight: 700;
       line-height: 0.9;
       letter-spacing: -2px;
-      margin: 12px 0;
+      margin: 12px 0 16px 0;
+    }
+
+    .weather-condition {
+      font-size: 20px;
+      font-weight: 400;
+      margin-bottom: 32px;
+      letter-spacing: 0.5px;
     }
 
     .temp-lo {
       font-size: 36px;
       font-weight: 500;
-      opacity: 0.7;
-      margin-top: 8px;
-      margin-bottom: 24px;
+      margin-top: 16px;
     }
     
     .temp-lo::before { 
       content: '▽ '; 
-      opacity: 0.5; 
       font-size: 28px;
     }
 
@@ -122,11 +124,7 @@
     }
 
     .rain-prob {
-      font-size: 72px;
-      font-weight: 300;
-      margin-top: 24px;
-      line-height: 1;
-      font-family: Arial, sans-serif;
+      display: none;
     }
 
     /* ===== RECHTE SEITE: LISTE ===== */
@@ -162,7 +160,6 @@
       font-weight: 400;
       padding: 10px 0;
       border-bottom: 1px solid currentColor;
-      opacity: 0.9;
       font-family: 'IBM Plex Mono', 'Courier New', monospace;
       letter-spacing: -0.3px;
     }
@@ -181,8 +178,8 @@
       <div class="location">BÖNEN</div>
       <div class="temp-hi" id="hi">–°</div>
       <div class="temp-main" id="temp">–°</div>
+      <div class="weather-condition" id="weather-condition">Lädt...</div>
       <div class="temp-lo" id="lo">–°</div>
-      <div class="rain-prob" id="weather-icon">○</div>
     </div>
 
     <!-- RECHTE SEITE: LISTE -->
@@ -232,27 +229,30 @@
           if (tMax != null) document.getElementById('hi').textContent = tMax + '°';
           if (tMin != null) document.getElementById('lo').textContent = tMin + '°';
           if (weatherCode != null) {
-            document.getElementById('weather-icon').textContent = getWeatherIcon(weatherCode);
+            document.getElementById('weather-condition').textContent = getWeatherText(weatherCode);
           }
         } catch (err) {
           console.error('Wetter-Fehler:', err);
         }
       }
 
-      // Wetter-Icons basierend auf WMO Weather codes (Outline-Stil)
-      function getWeatherIcon(code) {
-        if (code === 0) return '○';  // Klar (Kreis)
-        if (code === 1) return '◐';  // Hauptsächlich klar
-        if (code === 2) return '◑';  // Teilweise bewölkt
-        if (code === 3) return '●';  // Bewölkt
-        if (code >= 45 && code <= 48) return '≈';  // Nebel
-        if (code >= 51 && code <= 57) return '∴';  // Nieselregen
-        if (code >= 61 && code <= 67) return '‖';  // Regen
-        if (code >= 71 && code <= 77) return '❅';  // Schnee
-        if (code >= 80 && code <= 82) return '⋮';  // Regenschauer
-        if (code >= 85 && code <= 86) return '❆';  // Schneeschauer
-        if (code >= 95 && code <= 99) return '⚡';  // Gewitter
-        return '○';  // Unbekannt
+      // Wetter-Text basierend auf WMO Weather codes
+      function getWeatherText(code) {
+        if (code === 0) return 'Klar';
+        if (code === 1) return 'Heiter';
+        if (code === 2) return 'Teilweise bewölkt';
+        if (code === 3) return 'Bewölkt';
+        if (code >= 45 && code <= 48) return 'Neblig';
+        if (code >= 51 && code <= 55) return 'Nieselregen';
+        if (code >= 56 && code <= 57) return 'Gefrierender Nieselregen';
+        if (code >= 61 && code <= 65) return 'Regen';
+        if (code >= 66 && code <= 67) return 'Gefrierender Regen';
+        if (code >= 71 && code <= 75) return 'Schneefall';
+        if (code >= 77) return 'Schneegriesel';
+        if (code >= 80 && code <= 82) return 'Regenschauer';
+        if (code >= 85 && code <= 86) return 'Schneeschauer';
+        if (code >= 95 && code <= 99) return 'Gewitter';
+        return 'Unbekannt';
       }
 
       // ===== GOOGLE SHEET LADEN =====
