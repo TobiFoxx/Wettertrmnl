@@ -3,187 +3,172 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>TRMNL Wetter – 800×420 (Bönen)</title>
+  <title>TRMNL Wetter – 800×480 (Bönen + Sheet)</title>
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
   <style>
-    /* ===== Reset & Base ===== */
+    /* ===== Minimal S/W dashboard (800x480) ===== */
     * { box-sizing: border-box; }
     html, body { height: 100%; }
     body {
       margin: 0;
-      background: #fff; /* High-contrast white background */
-      color: #000;      /* Pure black text */
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Noto Sans", "Liberation Sans", sans-serif;
-      letter-spacing: 0.2px;
+      background: #fff; /* pure white */
+      color: #000;      /* pure black */
+      font-family: ui-sans-serif, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Noto Sans", sans-serif;
+      font-weight: 300; /* thin default */
+      letter-spacing: 0.1px;
       display: grid;
       place-items: center;
     }
-
-    /* Optional inversion: add ?invert=1 to URL to switch to white-on-black */
     body.invert { background: #000; color: #fff; }
 
-    /* ===== Fixed Canvas 800x420 ===== */
+    /* Root grid: left 2/3 weather, right 1/3 sheet */
     .canvas {
       width: 800px;
-      height: 420px;
+      height: 480px; /* updated height */
       display: grid;
-      grid-template-rows: 50% 17% 33%; /* top half, spacer, bottom third */
-      gap: 0;
+      grid-template-columns: 2fr 1fr; /* left = weather, right = sheet */
+      column-gap: 10px;
       padding: 12px 16px;
     }
 
-    /* Headings */
-    .title {
-      font-weight: 900;
-      letter-spacing: 0.5px;
-    }
-    .title.today { font-size: 26px; }
-    .title.tomorrow { font-size: 22px; }
+    /* Left column split: today / tomorrow */
+    .left { display: grid; grid-template-rows: 1fr 1fr; gap: 8px; }
 
-    /* 3-column weather layout */
-    .grid3 {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      align-items: center;
-      gap: 12px;
-    }
+    .title { font-weight: 400; letter-spacing: 0.4px; }
+    .title.today { font-size: 22px; }
+    .title.tomorrow { font-size: 18px; opacity: 0.95; }
 
-    /* Today sizing */
-    .today .icon svg { width: 200px; height: 200px; }
-    .today .temp { font-size: 140px; line-height: 0.9; font-weight: 800; text-align: center; }
-    .today .hi-lo { font-size: 42px; font-weight: 900; display: grid; gap: 8px; justify-items: start; }
+    /* Three-column weather blocks */
+    .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; align-items: center; gap: 10px; }
 
-    /* Tomorrow (smaller) */
-    .tomorrow .icon svg { width: 140px; height: 140px; }
-    .tomorrow .temp { font-size: 90px; line-height: 0.9; font-weight: 800; text-align: center; }
-    .tomorrow .hi-lo { font-size: 28px; font-weight: 900; display: grid; gap: 6px; justify-items: start; }
-
-    /* Line-art icons: only strokes, no fills */
-    svg, svg * { fill: none; stroke: currentColor; }
+    /* Icon styling – responsive to avoid clipping */
     .icon { display: grid; place-items: center; }
+    .icon svg { width: 100%; height: auto; }
+    .today .icon svg { max-width: 160px; }  /* ensure it fits 1/3 column */
+    .tomorrow .icon svg { max-width: 120px; }
+
+    /* Numerals: thin, minimalist */
+    .today .temp { font-size: 132px; line-height: 0.85; font-weight: 300; text-align: center; letter-spacing: -1px; }
+    .tomorrow .temp { font-size: 90px; line-height: 0.85; font-weight: 300; text-align: center; letter-spacing: -0.5px; }
+
+    .hi-lo { font-weight: 300; display: grid; gap: 10px; justify-items: start; }
+    .today .hi-lo { font-size: 40px; }
+    .tomorrow .hi-lo { font-size: 28px; }
+
+    /* Right column: Sheet panel (no title as requested) */
+    .right { display: grid; grid-template-rows: 1fr; border-left: 2px solid currentColor; padding-left: 12px; }
+    .sheet-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; align-content: start; overflow: hidden; }
+    .sheet-item { font-size: 24px; font-weight: 300; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+    /* Pure line art for all icons */
+    svg, svg * { fill: none; stroke: currentColor; vector-effect: non-scaling-stroke; stroke-linecap: round; stroke-linejoin: round; }
   </style>
 </head>
 <body>
-  <!-- Inline SVG symbol defs (line art) -->
+  <!-- ===== Alternative minimalist weather icon set (line art) ===== -->
   <svg width="0" height="0" style="position:absolute">
-    <!-- Sun (outline + rays) -->
-    <symbol id="i-sun" viewBox="0 0 64 64">
-      <circle cx="32" cy="32" r="14" stroke-width="4"/>
-      <g stroke-width="4" stroke-linecap="round">
-        <path d="M32 4v10M32 50v10M4 32h10M50 32h10M12 12l7 7M45 45l7 7M12 52l7-7M45 19l7-7"/>
-      </g>
+    <!-- Sun: thin halo + short rays -->
+    <symbol id="w-sun" viewBox="0 0 64 64">
+      <circle cx="32" cy="32" r="12"/>
+      <path d="M32 6v8M32 50v8M6 32h8M50 32h8M14 14l6 6M44 44l6 6M14 50l6-6M44 20l6-6"/>
     </symbol>
-
-    <!-- Moon (crescent outline) -->
-    <symbol id="i-moon" viewBox="0 0 64 64">
-      <path d="M44 43c-13 0-23-10-23-23 0-6 2-11 6-15C16 7 8 17 8 29c0 14 11 25 25 25 12 0 22-8 24-19-4 4-8 8-13 8z" stroke-width="4"/>
+    <!-- Moon: slim crescent -->
+    <symbol id="w-moon" viewBox="0 0 64 64">
+      <path d="M42 44c-12 0-22-9.8-22-22 0-5.5 2-10.6 5.3-14.4C16 9.2 10.2 18.3 10.2 28.8 10.2 42.4 21.6 54 35.2 54c10.5 0 19.6-5.8 22.4-14.9C54.3 41.7 48.8 44 42 44z"/>
     </symbol>
-
-    <!-- Cloud (outline) -->
-    <symbol id="i-cloud" viewBox="0 0 64 64">
-      <path d="M48 49H18a12 12 0 1 1 3.2-23.6A16 16 0 0 1 58 32a12 12 0 0 1-10 17z" stroke-width="4"/>
+    <!-- Cloud: airy outline -->
+    <symbol id="w-cloud" viewBox="0 0 64 64">
+      <path d="M22 48c-7 0-13-5.4-13-12s6-12 13.5-12c1.2-7.7 8.3-13.5 16.4-13.5C47.8 10.5 55 17.7 55 26.4c6 0 9.8 4.7 9.8 9.8C64.8 42.8 60.3 48 53.8 48H22z"/>
     </symbol>
-
-    <!-- Sun behind cloud (line art) -->
-    <symbol id="i-sun-cloud" viewBox="0 0 64 64">
-      <use href="#i-sun" x="-6" y="-6" width="40" height="40"/>
-      <use href="#i-cloud"/>
+    <!-- Partly (sun+cloud) -->
+    <symbol id="w-suncloud" viewBox="0 0 64 64">
+      <use href="#w-sun" x="-6" y="-6" width="40" height="40"/>
+      <use href="#w-cloud"/>
     </symbol>
-
-    <!-- Moon behind cloud (line art) -->
-    <symbol id="i-moon-cloud" viewBox="0 0 64 64">
-      <use href="#i-moon" x="-6" y="-6" width="40" height="40"/>
-      <use href="#i-cloud"/>
+    <!-- Night partly (moon+cloud) -->
+    <symbol id="w-mooncloud" viewBox="0 0 64 64">
+      <use href="#w-moon" x="-6" y="-6" width="40" height="40"/>
+      <use href="#w-cloud"/>
     </symbol>
-
-    <!-- Rain (outline cloud + drop lines) -->
-    <symbol id="i-rain" viewBox="0 0 64 64">
-      <use href="#i-cloud"/>
-      <g stroke-width="4" stroke-linecap="round">
-        <path d="M22 50v8M32 50v8M42 50v8"/>
-      </g>
+    <!-- Rain -->
+    <symbol id="w-rain" viewBox="0 0 64 64">
+      <use href="#w-cloud"/>
+      <path d="M22 50v8M32 50v8M42 50v8"/>
     </symbol>
-
-    <!-- Drizzle (thinner lines) -->
-    <symbol id="i-drizzle" viewBox="0 0 64 64">
-      <use href="#i-cloud"/>
-      <g stroke-width="3" stroke-linecap="round">
-        <path d="M22 50v6M32 50v6M42 50v6"/>
-      </g>
+    <!-- Drizzle -->
+    <symbol id="w-drizzle" viewBox="0 0 64 64">
+      <use href="#w-cloud"/>
+      <g style="stroke-width:2"><path d="M22 52v5M32 52v5M42 52v5"/></g>
     </symbol>
-
-    <!-- Snow (outline cloud + hollow flakes) -->
-    <symbol id="i-snow" viewBox="0 0 64 64">
-      <use href="#i-cloud"/>
-      <g stroke-width="3">
-        <circle cx="22" cy="54" r="3"/>
-        <circle cx="32" cy="54" r="3"/>
-        <circle cx="42" cy="54" r="3"/>
-      </g>
+    <!-- Snow -->
+    <symbol id="w-snow" viewBox="0 0 64 64">
+      <use href="#w-cloud"/>
+      <g><circle cx="22" cy="54" r="2.4"/><circle cx="32" cy="54" r="2.4"/><circle cx="42" cy="54" r="2.4"/></g>
     </symbol>
-
-    <!-- Thunder (outline cloud + bolt) -->
-    <symbol id="i-thunder" viewBox="0 0 64 64">
-      <use href="#i-cloud"/>
-      <path d="M30 42h8l-6 10h6l-10 12 4-12h-6z" stroke-width="4"/>
+    <!-- Thunder -->
+    <symbol id="w-thunder" viewBox="0 0 64 64">
+      <use href="#w-cloud"/>
+      <polyline points="30,42 38,42 30,54 38,54 28,66"/>
     </symbol>
-
-    <!-- Fog (outline cloud + lines) -->
-    <symbol id="i-fog" viewBox="0 0 64 64">
-      <use href="#i-cloud"/>
-      <g stroke-width="3" stroke-linecap="round">
-        <path d="M14 52h36M18 58h28"/>
-      </g>
+    <!-- Fog -->
+    <symbol id="w-fog" viewBox="0 0 64 64">
+      <use href="#w-cloud"/>
+      <path d="M14 52h36M18 58h28"/>
     </symbol>
   </svg>
 
   <div class="canvas">
-    <!-- ===== TODAY (top half) ===== -->
-    <section class="today">
-      <div class="title today">Today in Bönen</div>
-      <div class="grid3">
-        <div class="icon"><svg aria-hidden="true" id="icon-today"><use href="#i-cloud"></use></svg></div>
-        <div class="temp" id="temp-today">–°</div>
-        <div class="hi-lo">
-          <div id="hi-today">▲ –°</div>
-          <div id="lo-today">▼ –°</div>
+    <!-- LEFT: WEATHER -->
+    <div class="left">
+      <!-- TODAY -->
+      <section class="today">
+        <div class="title today">Today in Bönen</div>
+        <div class="grid3">
+          <div class="icon"><svg aria-hidden="true" id="icon-today"><use href="#w-cloud"></use></svg></div>
+          <div class="temp" id="temp-today">–°</div>
+          <div class="hi-lo">
+            <div id="hi-today">▲ –°</div>
+            <div id="lo-today">▼ –°</div>
+          </div>
         </div>
-      </div>
-    </section>
-
-    <!-- Spacer (keeps the visual split 1/2 vs 1/3) -->
-    <section></section>
-
-    <!-- ===== TOMORROW (bottom third) ===== -->
-    <section class="tomorrow">
-      <div class="title tomorrow">Tomorrow in Bönen</div>
-      <div class="grid3">
-        <div class="icon"><svg aria-hidden="true" id="icon-tom"><use href="#i-cloud"></use></svg></div>
-        <div class="temp" id="temp-tom">–°</div>
-        <div class="hi-lo">
-          <div id="hi-tom">▲ –°</div>
-          <div id="lo-tom">▼ –°</div>
+      </section>
+      <!-- TOMORROW -->
+      <section class="tomorrow">
+        <div class="title tomorrow">Tomorrow in Bönen</div>
+        <div class="grid3">
+          <div class="icon"><svg aria-hidden="true" id="icon-tom"><use href="#w-cloud"></use></svg></div>
+          <div class="temp" id="temp-tom">–°</div>
+          <div class="hi-lo">
+            <div id="hi-tom">▲ –°</div>
+            <div id="lo-tom">▼ –°</div>
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
+    </div>
+
+    <!-- RIGHT: SHEET PANEL (A2..A7) – no title -->
+    <aside class="right">
+      <ul class="sheet-list" id="sheet-list">
+        <li class="sheet-item">Wird geladen …</li>
+      </ul>
+    </aside>
   </div>
 
   <script>
     (function() {
       // Fixed location: Bönen, Germany
-      const lat = 51.600;   // Bönen ~ 51.600° N
-      const lon = 7.766;    // Bönen ~ 7.766° E
+      const lat = 51.600;
+      const lon = 7.766;
 
-      // Optional color inversion via query param
+      // Optional invert
       const params = new URLSearchParams(location.search);
       const invert = params.get('invert');
-      if (invert === '1' || invert === 'true') {
-        document.body.classList.add('invert');
-      }
+      if (invert === '1' || invert === 'true') document.body.classList.add('invert');
 
-      async function load() {
+      // ===== WEATHER =====
+      async function loadWeather() {
         try {
           const url = new URL('https://api.open-meteo.com/v1/forecast');
           url.searchParams.set('latitude', lat);
@@ -205,14 +190,14 @@
           const tMax0 = daily.temperature_2m_max ? Math.round(daily.temperature_2m_max[todayIdx]) : null;
           const tMin0 = daily.temperature_2m_min ? Math.round(daily.temperature_2m_min[todayIdx]) : null;
           const codeNow = (cw.weathercode != null ? cw.weathercode : (daily.weathercode ? daily.weathercode[todayIdx] : 3));
-          const isDay = cw.is_day === 1; // default to day icons if undefined
+          const isDay = cw.is_day === 1;
 
           if (nowTemp != null) document.getElementById('temp-today').textContent = nowTemp + '°';
           if (tMax0 != null) document.getElementById('hi-today').textContent = '▲ ' + tMax0 + '°';
           if (tMin0 != null) document.getElementById('lo-today').textContent = '▼ ' + tMin0 + '°';
           setIcon('today', (isDay ? interpretWMO(codeNow, true).icon : interpretWMO(codeNow, false).icon));
 
-          // TOMORROW (use daily forecast; center shows max temp)
+          // TOMORROW
           const tMax1 = daily.temperature_2m_max ? Math.round(daily.temperature_2m_max[tomorrowIdx]) : null;
           const tMin1 = daily.temperature_2m_min ? Math.round(daily.temperature_2m_min[tomorrowIdx]) : null;
           const code1 = daily.weathercode ? daily.weathercode[tomorrowIdx] : 3;
@@ -222,20 +207,20 @@
           if (tMin1 != null) document.getElementById('lo-tom').textContent = '▼ ' + tMin1 + '°';
           setIcon('tom', interpretWMO(code1, true).icon);
         } catch (err) {
-          console.error(err);
+          console.error('Weather error', err);
         }
       }
 
       function setIcon(which, id) {
         const use = document.querySelector('#icon-' + which + ' use');
-        use.setAttribute('href', '#i-' + id);
+        use.setAttribute('href', '#w-' + id);
       }
 
       function interpretWMO(code, isDay) {
         const map = {
           0: { d: {icon:'sun', text:'Klar'}, n: {icon:'moon', text:'Klar'} },
-          1: { d: {icon:'sun-cloud', text:'Überwiegend klar'}, n:{icon:'moon-cloud', text:'Überwiegend klar'} },
-          2: { d: {icon:'sun-cloud', text:'Teilweise bewölkt'}, n:{icon:'moon-cloud', text:'Teilweise bewölkt'} },
+          1: { d: {icon:'suncloud', text:'Überwiegend klar'}, n:{icon:'mooncloud', text:'Überwiegend klar'} },
+          2: { d: {icon:'suncloud', text:'Teilweise bewölkt'}, n:{icon:'mooncloud', text:'Teilweise bewölkt'} },
           3: { d: {icon:'cloud', text:'Bewölkt'}, n:{icon:'cloud', text:'Bewölkt'} },
           45:{ d: {icon:'fog', text:'Nebel'}, n:{icon:'fog', text:'Nebel'} },
           48:{ d: {icon:'fog', text:'Reifnebel'}, n:{icon:'fog', text:'Reifnebel'} },
@@ -266,8 +251,41 @@
         return isDay ? row.d : row.n;
       }
 
-      load();
-      setInterval(load, 15 * 60 * 1000);
+      // ===== SHEET (A2..A7) =====
+      async function loadSheet() {
+        const id = '1SfImqWa8PeKYWaXs01YQdFRSyUABkPlhBNluPeB6q8c';
+        const endpoints = [
+          `https://docs.google.com/spreadsheets/d/${id}/gviz/tq?tqx=out:csv&range=A2:A7`,
+          `https://docs.google.com/spreadsheets/d/${id}/export?format=csv&range=A2:A7`
+        ];
+        const list = document.getElementById('sheet-list');
+        list.innerHTML = '<li class="sheet-item">Wird geladen …</li>';
+        for (const url of endpoints) {
+          try {
+            const res = await fetch(url, { cache: 'no-store', mode: 'cors' });
+            if (!res.ok) throw new Error('HTTP ' + res.status);
+            const text = await res.text();
+            const rows = text.split(/\r?\n/).map(s => s.replace(/^"|"$/g, '').trim()).filter(Boolean);
+            if (rows.length) {
+              list.innerHTML = rows.map(v => `<li class="sheet-item">${escapeHTML(v)}</li>`).join('');
+              return;
+            }
+          } catch (e) {
+            // try next endpoint
+          }
+        }
+        list.innerHTML = '<li class="sheet-item">Kein Zugriff auf das Sheet (Link freigeben?)</li>';
+      }
+
+      function escapeHTML(s){
+        return s.replace(/[&<>\"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+      }
+
+      // Initial load + periodic refreshes
+      loadWeather();
+      loadSheet();
+      setInterval(loadWeather, 15 * 60 * 1000);
+      setInterval(loadSheet, 5 * 60 * 1000);
     })();
   </script>
 </body>
