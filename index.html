@@ -9,6 +9,7 @@
   <meta http-equiv="Expires" content="0" />
   <link rel="preconnect" href="https://fonts.cdnfonts.com" crossorigin>
   <link href="https://fonts.cdnfonts.com/css/charles-wright" rel="stylesheet">
+  <link href="https://fonts.cdnfonts.com/css/ibm-plex-mono" rel="stylesheet">
   <style>
     * { 
       box-sizing: border-box; 
@@ -121,10 +122,11 @@
     }
 
     .rain-prob {
-      font-size: 48px;
-      font-weight: 400;
-      margin-top: 20px;
+      font-size: 72px;
+      font-weight: 300;
+      margin-top: 24px;
       line-height: 1;
+      font-family: Arial, sans-serif;
     }
 
     /* ===== RECHTE SEITE: LISTE ===== */
@@ -157,10 +159,12 @@
 
     .sheet-item {
       font-size: 24px;
-      font-weight: 500;
+      font-weight: 400;
       padding: 10px 0;
       border-bottom: 1px solid currentColor;
       opacity: 0.9;
+      font-family: 'IBM Plex Mono', 'Courier New', monospace;
+      letter-spacing: -0.3px;
     }
 
     .sheet-item:last-child {
@@ -235,19 +239,19 @@
         }
       }
 
-      // Wetter-Icons basierend auf WMO Weather codes
+      // Wetter-Icons basierend auf WMO Weather codes (Outline-Stil)
       function getWeatherIcon(code) {
-        if (code === 0) return '☀';  // Klar
-        if (code === 1) return '🌤';  // Hauptsächlich klar
-        if (code === 2) return '⛅';  // Teilweise bewölkt
-        if (code === 3) return '☁';  // Bewölkt
-        if (code >= 45 && code <= 48) return '🌫';  // Nebel
-        if (code >= 51 && code <= 57) return '🌦';  // Nieselregen
-        if (code >= 61 && code <= 67) return '🌧';  // Regen
-        if (code >= 71 && code <= 77) return '❄';  // Schnee
-        if (code >= 80 && code <= 82) return '🌧';  // Regenschauer
-        if (code >= 85 && code <= 86) return '❄';  // Schneeschauer
-        if (code >= 95 && code <= 99) return '⛈';  // Gewitter
+        if (code === 0) return '○';  // Klar (Kreis)
+        if (code === 1) return '◐';  // Hauptsächlich klar
+        if (code === 2) return '◑';  // Teilweise bewölkt
+        if (code === 3) return '●';  // Bewölkt
+        if (code >= 45 && code <= 48) return '≈';  // Nebel
+        if (code >= 51 && code <= 57) return '∴';  // Nieselregen
+        if (code >= 61 && code <= 67) return '‖';  // Regen
+        if (code >= 71 && code <= 77) return '❅';  // Schnee
+        if (code >= 80 && code <= 82) return '⋮';  // Regenschauer
+        if (code >= 85 && code <= 86) return '❆';  // Schneeschauer
+        if (code >= 95 && code <= 99) return '⚡';  // Gewitter
         return '○';  // Unbekannt
       }
 
