@@ -78,10 +78,7 @@
     }
 
     .location {
-      font-size: 22px;
-      font-weight: 600;
-      letter-spacing: 1.5px;
-      margin-bottom: 32px;
+      display: none;
     }
 
     .temp-hi {
@@ -124,11 +121,10 @@
     }
 
     .rain-prob {
-      font-size: 18px;
+      font-size: 48px;
       font-weight: 400;
       margin-top: 20px;
-      opacity: 0.75;
-      line-height: 1.4;
+      line-height: 1;
     }
 
     /* ===== RECHTE SEITE: LISTE ===== */
@@ -149,14 +145,7 @@
     }
 
     .list-header {
-      font-size: 16px;
-      font-weight: 600;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      margin-bottom: 20px;
-      padding-bottom: 12px;
-      border-bottom: 2px solid currentColor;
-      opacity: 0.7;
+      display: none;
     }
 
     .sheet-list {
@@ -179,14 +168,6 @@
     }
 
     /* Aktualisierungszeit */
-    .update-time {
-      position: absolute;
-      bottom: 8px;
-      right: 12px;
-      font-size: 11px;
-      opacity: 0.4;
-      font-weight: 400;
-    }
   </style>
 </head>
 <body>
@@ -197,7 +178,7 @@
       <div class="temp-hi" id="hi">–°</div>
       <div class="temp-main" id="temp">–°</div>
       <div class="temp-lo" id="lo">–°</div>
-      <div class="rain-prob" id="prob">Regen: – %</div>
+      <div class="rain-prob" id="weather-icon">○</div>
     </div>
 
     <!-- RECHTE SEITE: LISTE -->
@@ -208,8 +189,6 @@
       </ul>
     </div>
   </div>
-
-  <div class="update-time" id="update-time"></div>
 
   <script>
     (function() {
@@ -222,13 +201,6 @@
         document.body.classList.add('invert');
       }
 
-      // Aktualisierungszeit
-      function updateTime() {
-        const now = new Date();
-        const time = now.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
-        document.getElementById('update-time').textContent = `${time}`;
-      }
-
       // ===== WETTER LADEN =====
       async function loadWeather() {
         try {
@@ -237,8 +209,7 @@
           url.searchParams.set('longitude', lon);
           url.searchParams.set('timezone', 'auto');
           url.searchParams.set('current_weather', 'true');
-          url.searchParams.set('daily', 'temperature_2m_max,temperature_2m_min,precipitation_probability_max');
-          url.searchParams.set('hourly', 'precipitation_probability');
+          url.searchParams.set('daily', 'temperature_2m_max,temperature_2m_min,weathercode');
 
           const res = await fetch(url.toString(), { cache: 'no-store' });
           if (!res.ok) throw new Error('HTTP ' + res.status);
@@ -251,34 +222,33 @@
           const nowTemp = cw.temperature != null ? Math.round(cw.temperature) : null;
           const tMax = daily.temperature_2m_max ? Math.round(daily.temperature_2m_max[todayIdx]) : null;
           const tMin = daily.temperature_2m_min ? Math.round(daily.temperature_2m_min[todayIdx]) : null;
-
-          let prob = null;
-          if (daily.precipitation_probability_max && daily.precipitation_probability_max[todayIdx] != null) {
-            prob = Math.round(daily.precipitation_probability_max[todayIdx]);
-          } else if (data.hourly && data.hourly.time && data.hourly.precipitation_probability) {
-            const tzNow = new Date();
-            const start = new Date(tzNow.getFullYear(), tzNow.getMonth(), tzNow.getDate(), 0, 0, 0);
-            const end = new Date(tzNow.getFullYear(), tzNow.getMonth(), tzNow.getDate(), 23, 59, 59);
-            let maxP = null;
-            for (let i = 0; i < data.hourly.time.length; i++) {
-              const t = new Date(data.hourly.time[i]);
-              if (t >= start && t <= end) {
-                const p = data.hourly.precipitation_probability[i];
-                if (p != null) maxP = maxP == null ? p : Math.max(maxP, p);
-              }
-            }
-            if (maxP != null) prob = Math.round(maxP);
-          }
+          const weatherCode = cw.weathercode != null ? cw.weathercode : null;
 
           if (nowTemp != null) document.getElementById('temp').textContent = nowTemp + '°';
           if (tMax != null) document.getElementById('hi').textContent = tMax + '°';
           if (tMin != null) document.getElementById('lo').textContent = tMin + '°';
-          if (prob != null) document.getElementById('prob').textContent = 'Regen: ' + prob + ' %';
-          
-          updateTime();
+          if (weatherCode != null) {
+            document.getElementById('weather-icon').textContent = getWeatherIcon(weatherCode);
+          }
         } catch (err) {
           console.error('Wetter-Fehler:', err);
         }
+      }
+
+      // Wetter-Icons basierend auf WMO Weather codes
+      function getWeatherIcon(code) {
+        if (code === 0) return '☀';  // Klar
+        if (code === 1) return '🌤';  // Hauptsächlich klar
+        if (code === 2) return '⛅';  // Teilweise bewölkt
+        if (code === 3) return '☁';  // Bewölkt
+        if (code >= 45 && code <= 48) return '🌫';  // Nebel
+        if (code >= 51 && code <= 57) return '🌦';  // Nieselregen
+        if (code >= 61 && code <= 67) return '🌧';  // Regen
+        if (code >= 71 && code <= 77) return '❄';  // Schnee
+        if (code >= 80 && code <= 82) return '🌧';  // Regenschauer
+        if (code >= 85 && code <= 86) return '❄';  // Schneeschauer
+        if (code >= 95 && code <= 99) return '⛈';  // Gewitter
+        return '○';  // Unbekannt
       }
 
       // ===== GOOGLE SHEET LADEN =====
@@ -327,7 +297,6 @@
       loadSheet();
       setInterval(loadWeather, 15 * 60 * 1000);  // Alle 15 Minuten
       setInterval(loadSheet, 5 * 60 * 1000);     // Alle 5 Minuten
-      setInterval(updateTime, 60 * 1000);        // Jede Minute
     })();
   </script>
 </body>
