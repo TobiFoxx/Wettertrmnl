@@ -8,8 +8,7 @@
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
   <link rel="preconnect" href="https://fonts.cdnfonts.com" crossorigin>
-  <link href="https://fonts.cdnfonts.com/css/charles-wright" rel="stylesheet">
-  <link href="https://fonts.cdnfonts.com/css/ibm-plex-mono" rel="stylesheet">
+  <link href="https://fonts.cdnfonts.com/css/share-tech-mono" rel="stylesheet">
   <style>
     * { 
       box-sizing: border-box; 
@@ -37,7 +36,7 @@
     body {
       background: #fff;
       color: #000;
-      font-family: 'Charles Wright', -apple-system, system-ui, sans-serif;
+      font-family: 'Share Tech Mono', 'Courier New', monospace;
       font-weight: 400;
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
@@ -82,10 +81,18 @@
       display: none;
     }
 
+    .weather-condition {
+      font-size: 32px;
+      font-weight: 600;
+      margin-bottom: 32px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
     .temp-hi {
       font-size: 36px;
       font-weight: 500;
-      margin-bottom: 16px;
+      margin-bottom: 32px;
     }
     
     .temp-hi::before { 
@@ -98,20 +105,13 @@
       font-weight: 700;
       line-height: 0.9;
       letter-spacing: -2px;
-      margin: 12px 0 16px 0;
-    }
-
-    .weather-condition {
-      font-size: 20px;
-      font-weight: 400;
-      margin-bottom: 32px;
-      letter-spacing: 0.5px;
+      margin: 40px 0;
     }
 
     .temp-lo {
       font-size: 36px;
       font-weight: 500;
-      margin-top: 16px;
+      margin-top: 32px;
     }
     
     .temp-lo::before { 
@@ -160,7 +160,6 @@
       font-weight: 400;
       padding: 10px 0;
       border-bottom: 1px solid currentColor;
-      font-family: 'IBM Plex Mono', 'Courier New', monospace;
       letter-spacing: -0.3px;
     }
 
