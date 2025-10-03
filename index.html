@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=800, height=480" />
+  <meta name="viewport" content="width=800, height=480, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>TRMNL Wetter Bönen</title>
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
@@ -16,9 +16,21 @@
       padding: 0; 
     }
     
-    html, body { 
-      height: 100%; 
+    html { 
+      width: 800px;
+      height: 480px;
       overflow: hidden;
+    }
+    
+    html, body { 
+      width: 800px;
+      height: 480px; 
+      overflow: hidden;
+      margin: 0;
+      padding: 0;
+      position: fixed;
+      top: 0;
+      left: 0;
     }
     
     body {
@@ -39,21 +51,25 @@
       width: 800px;
       height: 480px;
       display: grid;
-      grid-template-columns: 280px 1fr;
+      grid-template-columns: 280px 520px;
       gap: 0;
       padding: 0;
+      margin: 0;
+      position: relative;
     }
 
     /* ===== LINKE SEITE: WETTER ===== */
     .weather {
       background: #000;
       color: #fff;
-      padding: 32px 28px;
+      padding: 0;
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
       text-align: center;
+      height: 480px;
+      width: 280px;
     }
     
     body.invert .weather {
@@ -122,6 +138,9 @@
       padding: 32px 36px;
       display: flex;
       flex-direction: column;
+      height: 480px;
+      width: 520px;
+      overflow: hidden;
     }
     
     body.invert .content {
